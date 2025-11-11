@@ -13,6 +13,10 @@ cmds = [
   "echo 'Skipping build phase; already handled during install.'"
 ]
 
+[variables]
+NIXPACKS_PATH = "/app/.venv/bin:$NIXPACKS_PATH"
+PATH = "/app/.venv/bin:$PATH"
+
 [start]
 cmd = "/app/.venv/bin/python bot.py"
 
