@@ -7,6 +7,7 @@ import logging
 import os
 import tempfile
 import textwrap
+import shutil
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -566,6 +567,23 @@ class TwitterNewsBot:
             logger.warning("pyppeteer is not installed; skipping screenshot generation")
             return None
 
+        executable_path = (
+            os.environ.get("CHROMIUM_PATH")
+            or shutil.which("chromium")
+            or shutil.which("chromium-browser")
+            or shutil.which("google-chrome")
+            or shutil.which("google-chrome-stable")
+        )
+
+        if not executable_path:
+            logger.error(
+                "Chromium executable not found. Set CHROMIUM_PATH environment variable "
+                "or ensure chromium is available on PATH."
+            )
+            return None
+
+        logger.debug("Using Chromium executable at: %s", executable_path)
+
         browser = await launch(
             headless=True,
             args=[
@@ -578,6 +596,7 @@ class TwitterNewsBot:
             handleSIGINT=False,
             handleSIGTERM=False,
             handleSIGHUP=False,
+            executablePath=executable_path,
         )
         try:
             page = await browser.newPage()
