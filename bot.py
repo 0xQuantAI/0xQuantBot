@@ -5,6 +5,7 @@ import asyncio
 import json
 import logging
 import os
+import subprocess
 import tempfile
 import textwrap
 import shutil
@@ -286,6 +287,43 @@ class TwitterNewsBot:
                 except Exception:
                     continue
         
+        # Try locating font via fontconfig, common on Linux containers
+        def _load_with_fontconfig(family: str) -> Optional[ImageFont.FreeTypeFont]:
+            pattern = family
+            if bold:
+                pattern = f"{family}:style=Bold"
+            try:
+                result = subprocess.run(
+                    ["fc-match", "-f", "%{file}\n", pattern],
+                    capture_output=True,
+                    text=True,
+                    check=True,
+                )
+                font_path = result.stdout.strip()
+                if font_path and Path(font_path).exists():
+                    logger.debug("Loaded font via fontconfig: %s (%s)", font_path, pattern)
+                    return ImageFont.truetype(font_path, size)
+            except Exception as exc:
+                logger.debug("fontconfig lookup failed for %s: %s", pattern, exc)
+            return None
+
+        fontconfig_families = {
+            "Inter": "Inter",
+            "Montserrat": "Montserrat",
+            "Roboto": "Roboto",
+            "HelveticaNeue": "Helvetica Neue",
+        }
+        fc_family = fontconfig_families.get(font_name)
+        if fc_family:
+            font = _load_with_fontconfig(fc_family)
+            if font:
+                return font
+        # Try generic fallbacks
+        for generic in ["DejaVu Sans", "Arial", "Liberation Sans"]:
+            font = _load_with_fontconfig(generic)
+            if font:
+                return font
+
         # Fallback to default font
         try:
             return ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", size)
