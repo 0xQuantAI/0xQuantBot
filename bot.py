@@ -60,29 +60,60 @@ class TwitterNewsBot:
     ]
 
     COINGECKO_IDS = ["bitcoin", "ethereum", "solana", "ripple", "cardano"]
+    CREDENTIAL_KEYS = [
+        "twitter_api_key",
+        "twitter_api_secret",
+        "twitter_access_token",
+        "twitter_access_secret",
+        "openai_api_key",
+    ]
 
     def __init__(self, config: Dict[str, Any]):
-        self.config = config
+        self.config: Dict[str, Any] = {}
+        self.twitter_client: Optional[tweepy.Client] = None
+        self.twitter_api: Optional[tweepy.API] = None
+        self.openai_client: Optional[OpenAI] = None
 
-        logger.debug("Initialising TwitterNewsBot with config keys: %s", list(config.keys()))
+        self.apply_config(config, reset_credentials=True)
+        logger.debug("TwitterNewsBot initialised successfully")
 
+    def apply_config(self, config: Dict[str, Any], *, reset_credentials: bool = False) -> None:
+        """Merge new configuration values and optionally refresh API clients."""
+        if not config:
+            return
+
+        logger.debug("Applying configuration update with keys: %s", list(config.keys()))
+
+        # Update stored config (ignore None to preserve previous explicit values)
+        filtered_config = {key: value for key, value in config.items() if value is not None}
+        self.config.update(filtered_config)
+
+        should_reset = reset_credentials or any(key in filtered_config for key in self.CREDENTIAL_KEYS)
+        if should_reset:
+            self._initialize_clients()
+
+    def _initialize_clients(self) -> None:
+        missing = [key for key in self.CREDENTIAL_KEYS if not self.config.get(key)]
+        if missing:
+            raise ValueError(f"Missing credentials for client initialisation: {', '.join(missing)}")
+
+        logger.debug("Initialising Twitter clients with provided credentials")
         self.twitter_client = tweepy.Client(
-            consumer_key=config["twitter_api_key"],
-            consumer_secret=config["twitter_api_secret"],
-            access_token=config["twitter_access_token"],
-            access_token_secret=config["twitter_access_secret"],
+            consumer_key=self.config["twitter_api_key"],
+            consumer_secret=self.config["twitter_api_secret"],
+            access_token=self.config["twitter_access_token"],
+            access_token_secret=self.config["twitter_access_secret"],
         )
 
         auth = tweepy.OAuth1UserHandler(
-            config["twitter_api_key"],
-            config["twitter_api_secret"],
-            config["twitter_access_token"],
-            config["twitter_access_secret"],
+            self.config["twitter_api_key"],
+            self.config["twitter_api_secret"],
+            self.config["twitter_access_token"],
+            self.config["twitter_access_secret"],
         )
         self.twitter_api = tweepy.API(auth)
 
-        self.openai_client = OpenAI(api_key=config["openai_api_key"])
-        logger.debug("TwitterNewsBot initialised successfully")
+        self.openai_client = OpenAI(api_key=self.config["openai_api_key"])
 
     # ------------------------------------------------------------------
     # News fetching helpers
