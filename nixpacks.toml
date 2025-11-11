@@ -3,14 +3,14 @@ nixPkgs = ["python311", "python311Packages.pip", "chromium"]
 
 [phases.install]
 cmds = [
-  "python3 -m pip install --upgrade pip",
-  "python3 -m pip install -r requirements.txt"
+  "pip3 install --upgrade pip",
+  "pip3 install -r requirements.txt"
 ]
 
 [phases.build]
 cmds = [
-  "python3 -m pip install --upgrade pip",
-  "python3 -m pip install -r requirements.txt"
+  "pip3 install --upgrade pip",
+  "pip3 install -r requirements.txt"
 ]
 
 [start]
