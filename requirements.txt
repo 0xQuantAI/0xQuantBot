@@ -8,7 +8,7 @@ openai==1.12.0
 
 # HTTP Requests
 requests==2.31.0
-httpx>=0.24.0  # Required for OpenAI client
+httpx>=0.24.0,<0.28  # Required for OpenAI client; <0.28 to avoid proxies incompatibility
 
 # Scheduling
 schedule==1.2.0
