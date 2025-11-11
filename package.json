@@ -1,0 +1,38 @@
+{
+  "name": "twitter-news-bot",
+  "version": "1.0.0",
+  "description": "Automated Twitter bot that fetches news, summarizes with AI, and posts with generated media",
+  "main": "bot.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/bot.js",
+    "dev": "ts-node bot.ts",
+    "test": "ts-node test-bot.ts",
+    "once": "ts-node bot.ts --once",
+    "once:image": "ts-node bot.ts --once --image",
+    "once:video": "ts-node bot.ts --once --video",
+    "scheduled": "ts-node bot.ts --scheduled",
+    "scheduled:image": "ts-node bot.ts --scheduled --image"
+  },
+  "keywords": [
+    "twitter",
+    "bot",
+    "ai",
+    "news",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "twitter-api-v2": "^1.19.0",
+    "openai": "^4.80.1",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.12",
+    "typescript": "^5.7.3",
+    "ts-node": "^10.9.2"
+  }
+}
+

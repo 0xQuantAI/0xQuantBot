@@ -1,0 +1,28 @@
+# Python Twitter News Bot Dependencies
+
+# Twitter API
+tweepy==4.14.0
+
+# OpenAI API
+openai==1.12.0
+
+# HTTP Requests
+requests==2.31.0
+httpx>=0.24.0  # Required for OpenAI client
+
+# Scheduling
+schedule==1.2.0
+
+# Environment variables
+python-dotenv==1.0.1
+
+# Web service
+fastapi==0.110.0
+uvicorn[standard]==0.27.1
+
+# Screenshot capture
+pyppeteer==1.0.2
+
+# Image processing
+Pillow==10.2.0
+
