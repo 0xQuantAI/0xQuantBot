@@ -9,7 +9,9 @@ cmds = [
 ]
 
 [phases.build]
-cmds = []
+cmds = [
+  "echo 'Skipping build phase; already handled during install.'"
+]
 
 [start]
 cmd = "/app/.venv/bin/python bot.py"
