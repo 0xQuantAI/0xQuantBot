@@ -64,8 +64,7 @@ class TwitterNewsBot:
         "twitter_api_key",
         "twitter_api_secret",
         "twitter_access_token",
-        "twitter_access_secret",
-        "openai_api_key",
+        "twitter_access_secret"
     ]
 
     def __init__(self, config: Dict[str, Any]):
